@@ -1,24 +1,25 @@
-import React, { useState, useCallback } from "react";
-import { Hello } from "./Hello";
-import { Square } from "./Square";
+import React, { useState, useEffect } from "react";
+import { useFetch } from "./useFetch";
 const App = () => {
-  const [count, setCount] = useState(0);
-  const favoriteNums = [7, 21, 37];
-  const increment = useCallback(
-    (n) => {
-      setCount((c) => c + n);
-    },
-    [setCount]
+  // http://numbersapi.com/43/trivia
+  const localStorCount = JSON.parse(localStorage.getItem("count")); // refresh pages
+  const [count, setCount] = useState(() =>
+    localStorCount ? localStorCount : 0
   );
+  const { data, loading } = useFetch(`http://numbersapi.com/${count}/trivia`);
+
+  useEffect(() => {
+    if (count) {
+      localStorage.setItem("count", JSON.stringify(count)); // set refresh pages
+    }
+  }, [count]); // Change count
+
   return (
     <div>
-      <Hello increment={increment} />
+      <div>{loading ? "loading..." : data}</div>
       <div>count: {count}</div>
-      {favoriteNums.map((n) => {
-        return <Square increment={increment} n={n} key={n} />;
-      })}
+      <button onClick={() => setCount((c) => c + 1)}>increment</button>
     </div>
   );
 };
-
 export default App;

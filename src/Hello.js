@@ -1,6 +1,11 @@
-import React from "react";
-import {useCountRenders} from './useCountRenders'
-export const Hello = React.memo(({ increment }) => {
-    useCountRenders();
-  return <button onClick={()=> increment(5)}>Hello</button>;
-}); 
+import React, { useEffect } from "react";
+export const Hello = () => {
+  useEffect(() => {
+    console.log("render");
+
+    return () => {
+      console.log("unmount");
+    };
+  }, []);
+  return <div>Hello</div>;
+};
